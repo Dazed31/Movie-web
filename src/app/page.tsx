@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from 'react'
 import Search from './components/Search'
+import MovieCard from './components/MovieCard'
+import Spinner from './components/spinners'
 
 const API_BASE_URL = 'https://api.themoviedb.org/3';
 const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY
@@ -60,15 +62,16 @@ try {
           <Search searchTerm = {searchTerm}  setSearchTerm = {setSearchTerm}/>
         </header>
         <section className='all-movies'>
-         <h2>All Movies</h2>
+         <h2 className='mt-[40px]'>All Movies</h2>
          {
            isloading?(
-            <p className='Text-red-500'>Loading....</p>
+           <Spinner />
           ): (
             <ul>
               {
                 movieList.map((movie) => (
-                  <p className='text-white'>{movie.title}</p>
+                  <MovieCard key={movie.id} movie={movie}/>
+                  //<p className='text-white'>{movie.title}</p>
                 ))
               }
             </ul>
