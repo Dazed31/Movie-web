@@ -5,8 +5,6 @@ import Search from './components/Search'
 import MovieCard from './components/MovieCard'
 import Spinner from './components/spinners'
 import { useDebounce } from 'react-use'
-import { getTrendingMovies, updateSearchCount } from './appwrite'
-import { Models } from 'appwrite'
 
 const API_BASE_URL = 'https://api.themoviedb.org/3'
 const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY
@@ -19,7 +17,6 @@ const API_OPTIONS = {
   },
 }
 
-// ⬇ TMDB API movie object type
 type TMDBMovie = {
   id: number
   title: string
@@ -30,7 +27,6 @@ type TMDBMovie = {
   original_language: string
 }
 
-// ⬇ Appwrite trending movie document structure
 type TrendingMovie = {
   $id: string
   title: string
@@ -74,7 +70,11 @@ const Page = () => {
       setMovieList(data.results || [])
 
       if (query && data.results.length > 0) {
-        await updateSearchCount(query, data.results[0])
+        await fetch('/api/appwrite-function', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ searchTerm: query, movie: data.results[0] }),
+        })
       }
     } catch (error) {
       console.error(`Error fetching movies:`, error)
@@ -86,8 +86,13 @@ const Page = () => {
 
   const loadTrendingMovies = async () => {
     try {
-      const docs = await getTrendingMovies()
-      const movies: TrendingMovie[] = (docs || []).map((doc: Models.Document) => ({
+      const response = await fetch('/api/appwrite-function', {
+        method: 'GET',
+      })
+
+      const json = await response.json()
+      const docs = json.movies || []
+      const movies: TrendingMovie[] = docs.map((doc: any) => ({
         $id: doc.$id,
         title: doc.title,
         poster_url: doc.poster_url,
