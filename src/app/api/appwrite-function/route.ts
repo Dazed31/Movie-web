@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-const { Client, Databases, ID, Query } = require("node-appwrite");
+import { Client, Query, ID, Databases } from 'appwrite'
 
 const allowedOrigins = [
   'http://localhost:3000',
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
   const client = new Client()
     .setEndpoint('https://syd.cloud.appwrite.io/v1')
     .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!)
-    .setKey(process.env.APPWRITE_API_KEY!)
+
 
   const db = new Databases(client)
 
@@ -72,7 +72,7 @@ export async function GET() {
   const client = new Client()
     .setEndpoint('https://syd.cloud.appwrite.io/v1')
     .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!)
-    .setKey(process.env.APPWRITE_API_KEY!)
+  
 
   const db = new Databases(client)
 
